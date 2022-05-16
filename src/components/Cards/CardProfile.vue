@@ -1,0 +1,104 @@
+<template>
+  <div
+      class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg mt-16"
+  >
+    <div class="px-6 flex flex-col justify-center items-center" v-if="current_user">
+      <div class="flex flex-wrap justify-center">
+        <div class="w-full px-4 flex justify-center">
+          <div class="relative">
+            <img
+                alt="..."
+                :src="team2"
+                class="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px"
+            />
+          </div>
+        </div>
+        <div class="w-full text-center mt-20">
+        </div>
+      </div>
+      <div class="mt-12">
+        <h3
+            class="text-xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2"
+        >
+          <template v-if="current_user.society">
+            {{ current_user.society.name }}
+          </template>
+          <template v-if="current_user.person">
+            {{ current_user.person.last_name }} {{ current_user.person.first_name }}
+          </template>
+        </h3>
+        <div
+            class="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase"
+            v-if="current_user.society"
+        >
+          <i class="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
+          {{ current_user.society.location }}
+        </div>
+        <div class="mb-2 text-blueGray-600 mt-2" v-if="current_user.society">
+          <i class="fas fa-briefcase mr-2 text-lg text-blueGray-400"></i>
+          Enterprise
+        </div>
+        <div class="mb-2 text-blueGray-600" v-else>
+          <i class="fas fa-user mr-2 text-lg text-blueGray-400"></i>
+          Particulier
+        </div>
+        <div class="mb-2 text-blueGray-600">
+          <i class="fas fa-at mr-2 text-lg text-blueGray-400"></i>
+
+          <a class="text-lightBlue-400" :href="`mailto:${current_user.email}`">
+            {{ current_user.email }}
+          </a>
+        </div>
+        <div class="mb-5 text-blueGray-600">
+          <i class="fas fa-phone mr-2 text-lg text-blueGray-400"></i>
+          <a class="text-lightBlue-400" :href="`tel:${current_user.phone_ex}${current_user.phone}`">
+            {{ current_user.phone_ex }} {{ phoneFormat(current_user.phone) }}
+          </a>
+        </div>
+      </div>
+      <div class="mt-10 py-10 border-t border-blueGray-200" v-if="current_user.society">
+        <div class="flex flex-wrap">
+          <div class="mb-2 text-blueGray-600 mt-2 pl-4">
+            Description
+          </div>
+          <p class="w-full px-4">
+            {{ current_user.society.desc }} lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import {mapGetters} from "vuex";
+import team2 from "@/assets/img/team-2-800x800.jpg";
+
+export default {
+  methods: {
+    phoneFormat(input) {
+      console.log(input);
+      if (!input || isNaN(input)) return `input must be a number was sent ${input}`
+      if (typeof (input) !== 'string') input = input.toString()
+      if (input.length === 9) {
+        return input.replace(/(\d)(\d{2})(\d{2})(\d{2})(\d{2})/, "$1 $2 $3 $4 $5")
+      } else if (input.length < 10) {
+        return 'was not supplied enough numbers please pass a 10 digit number'
+      } else if (input.length > 10) {
+        return 'was supplied too many numbers please pass a 10 digit number'
+      } else {
+        return 'something went wrong'
+      }
+    }
+  },
+  computed: {
+    ...mapGetters({
+      current_user: "user/user",
+    })
+  },
+  data() {
+    return {
+      team2
+    };
+  },
+};
+</script>
