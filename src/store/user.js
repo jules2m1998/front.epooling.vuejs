@@ -1,4 +1,4 @@
-import {BASE_URI} from "@/store/config";
+import {BASE_URI, formDataRequest, send_request_with_token} from "@/store/config";
 
 export default {
     namespaced: true,
@@ -8,20 +8,24 @@ export default {
     mutations: {
         SET_USER(state, user) {
             state.user = user;
+            if (state.user){
+                for (let key in state.user) {
+                    state.user[key] = user[key]
+                }
+            }
+        },
+        CLEAR_USER(state) {
+            state.user = null;
         }
     },
     actions: {
         async createCurrentUser({commit}, {user, isPerson = false}) {
-            console.log(user)
             const url = `${BASE_URI}user/${isPerson ? 'user_person' : 'user_society'}`;
             const resonse = await fetch(
                 url,
                 {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(user)
+                    body: formDataRequest(user)
                 });
             if (resonse.status === 201) {
                 const data = await resonse.json();
@@ -41,6 +45,34 @@ export default {
             if (resonse.status === 200) {
                 const data = await resonse.json();
                 commit('SET_USER', data);
+            }
+        },
+        async updateUser({commit}, user) {
+            const url = `${BASE_URI}user`;
+            const resonse = await fetch(
+                url,
+                {
+                    method: 'PUT',
+                    body: formDataRequest(user),
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+            if (resonse.status === 200) {
+                const data = await resonse.json();
+                commit('SET_USER', data);
+            }
+        },
+        async updateSociety({dispatch}, person) {
+            const resonse = await send_request_with_token('user/society', 'PUT', formDataRequest(person));
+            if (resonse.status === 200) {
+                dispatch('getCurrentUser');
+            }
+        },
+        async updatePerson({dispatch}, person) {
+            const resonse = await send_request_with_token('user/person', 'PUT', formDataRequest(person));
+            if (resonse.status === 200) {
+                dispatch('getCurrentUser');
             }
         },
     },

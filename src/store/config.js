@@ -8,3 +8,21 @@ export const formatRequestion = item => {
     }
     return formBody.join("&");
 }
+
+export const formDataRequest = item => {
+    let formBody = new FormData();
+    for (const property in item) {
+        formBody.append(property, item[property]);
+    }
+    return formBody;
+}
+
+export const send_request_with_token = async (url, method, body) => {
+    return await fetch(BASE_URI + url, {
+        method: method,
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+        body: body
+    })
+}

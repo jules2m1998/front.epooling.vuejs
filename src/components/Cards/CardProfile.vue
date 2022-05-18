@@ -6,14 +6,9 @@
       <div class="flex flex-wrap justify-center">
         <div class="w-full px-4 flex justify-center">
           <div class="relative">
-            <img
-                alt="..."
-                :src="team2"
-                class="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px"
-            />
+            <default-image v-if="!current_user.avatar_url" style="width: 200px; height: 200px;" />
+            <img v-else :src="`${uri}${current_user.avatar_url}`" class="object-cover border border-indigo-600 rounded-full mt-3" style="width: 200px; height: 200px;" />
           </div>
-        </div>
-        <div class="w-full text-center mt-20">
         </div>
       </div>
       <div class="mt-12">
@@ -49,6 +44,14 @@
             {{ current_user.email }}
           </a>
         </div>
+        <div class="mb-2 text-blueGray-600" v-if="current_user.person">
+          <i class="fas fa-mars mr-2 text-lg text-blueGray-400" v-if="current_user.person.sex !== 1"></i>
+          <i class="fas fa-venus mr-2 text-lg text-blueGray-400" v-else></i>
+
+          <a class="text-lightBlue-400" :href="`mailto:${current_user.email}`">
+            {{ current_user.person.sex === 1 ? 'Femme' : 'Homme' }}
+          </a>
+        </div>
         <div class="mb-5 text-blueGray-600">
           <i class="fas fa-phone mr-2 text-lg text-blueGray-400"></i>
           <a class="text-lightBlue-400" :href="`tel:${current_user.phone_ex}${current_user.phone}`">
@@ -72,8 +75,11 @@
 <script>
 import {mapGetters} from "vuex";
 import team2 from "@/assets/img/team-2-800x800.jpg";
+import DefaultImage from "@/components/DefaultImage";
+import {BASE_URI} from "@/store/config";
 
 export default {
+  components: {DefaultImage},
   methods: {
     phoneFormat(input) {
       console.log(input);
@@ -81,12 +87,8 @@ export default {
       if (typeof (input) !== 'string') input = input.toString()
       if (input.length === 9) {
         return input.replace(/(\d)(\d{2})(\d{2})(\d{2})(\d{2})/, "$1 $2 $3 $4 $5")
-      } else if (input.length < 10) {
-        return 'was not supplied enough numbers please pass a 10 digit number'
-      } else if (input.length > 10) {
-        return 'was supplied too many numbers please pass a 10 digit number'
       } else {
-        return 'something went wrong'
+        return input
       }
     }
   },
@@ -97,7 +99,8 @@ export default {
   },
   data() {
     return {
-      team2
+      team2,
+      uri: BASE_URI
     };
   },
 };
