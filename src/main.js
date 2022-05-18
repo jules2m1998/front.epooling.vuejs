@@ -43,6 +43,9 @@ const routes = [
         path: "/admin",
         redirect: "/admin/dashboard",
         component: Admin,
+        meta: {
+            requiresAuth: true
+        },
         children: [
             {
                 path: "/admin/dashboard",
@@ -104,6 +107,23 @@ const store = createStore({
     modules: {
         account,
         user
+    }
+})
+
+router.beforeEach(async (to, from, next) => {
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        const user = await store.dispatch('account/get_me');
+        if (user) {
+            next();
+        } else {
+            store.commit('account/REMOVE_TOKEN')
+            next({
+                path: '/auth/login',
+                query: { redirect: to.fullPath }
+            })
+        }
+    } else {
+        next();
     }
 })
 
