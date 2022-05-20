@@ -3,6 +3,7 @@ import { createStore } from 'vuex'
 import {createWebHistory, createRouter} from "vue-router";
 import account from "@/store/account";
 import user from "@/store/user";
+import notice from "@/store/notice";
 
 // styles
 
@@ -106,7 +107,8 @@ const router = createRouter({
 const store = createStore({
     modules: {
         account,
-        user
+        user,
+        notice,
     }
 })
 

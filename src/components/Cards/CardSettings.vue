@@ -21,6 +21,12 @@
     </div>
     <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
       <div>
+        <div class="bg-orange-200 text-orange-700 px-4 py-3 mt-3 rounded relative" role="alert" v-if="errors.length">
+          <strong class="font-bold">Champs invalides</strong>
+          <ul class="block sm:inline">
+            <li v-for="(e, k) in errors" :key="k">{{ e }}</li>
+          </ul>
+        </div>
         <h6 class="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
           Informatiion sur le compte
         </h6>
@@ -103,7 +109,7 @@
                   type="text"
                   class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   placeholder="6xxxxxxxx"
-                  v-model.number="user_detail.phone"
+                  v-model="user_detail.phone"
               />
             </div>
           </div>
@@ -253,7 +259,16 @@ export default {
         name: null
       },
       uri: BASE_URI,
-      avatarFile: null
+      avatarFile: null,
+      errors: [],
+      frenchField: {
+        phone: 'Telephone',
+        phone_ex: 'Extension du numero de telephone',
+        first_name: 'Prénom',
+        last_name: 'Nom',
+        email: 'Email',
+
+      }
     }
   },
   methods: {
@@ -264,6 +279,7 @@ export default {
           updateUser: "user/updateUser",
           updateSociety: "user/updateSociety",
           updatePerson: "user/updatePerson",
+          noticeMe: 'notice/addNotice'
         }
     ),
     async create() {
@@ -278,13 +294,15 @@ export default {
             } else {
               user = {...this.user_detail, account_id: this.account.id}
             }
+            let isPerson = false
             if (this.isEnterprise) {
               user = {...user, ...this.society};
-              await this.createCurrentUser({user});
             } else {
               user = {...user, ...this.person};
-              await this.createCurrentUser({user, isPerson: true})
+              isPerson = true
             }
+            const response = await this.createCurrentUser({user, isPerson: isPerson})
+            console.log(response)
           } catch (e) {
             console.log(e)
           }
@@ -321,7 +339,8 @@ export default {
       if (this.avatarFile) {
         update_user.avatar = this.avatarFile
       }
-      await this.updateUser(update_user)
+      const response = await this.updateUser(update_user)
+      await this.showUpdateMessage(response)
     },
     async updateCurrentSociety() {
       console.log('society update')
@@ -330,16 +349,37 @@ export default {
         user_id: this.current_user.id,
         id: this.current_user?.society?.id
       }
-      await this.updateSociety(diff)
+      const response = await this.updateSociety(diff)
+      await this.showUpdateMessage(response)
     },
     async updateCurrentPerson() {
       console.log('society update')
       const diff = {
         ...this.objectDiff(this.person, this.current_user?.person),
-        user_id: this.current_user.id,
-        id: this.current_user?.person?.id
+        user_id: this.current_user.id
       }
-      await this.updatePerson(diff)
+      const response = await this.updatePerson(diff)
+      await this.showUpdateMessage(response)
+    },
+    async showUpdateMessage(response) {
+      this.errors = []
+      if (response.ok){
+        this.noticeMe({msg: 'Modification effectuée avec succès', isSuccess: true})
+      } else {
+        // const h =  {"detail":[{"loc":["body","phone"],"msg":"value is not a valid integer","type":"type_error.integer"}]}
+        if (response.status === 422) {
+          this.noticeMe({msg: 'Veuillez corriger les erreurs', isError: true})
+          const body = await response.json()
+          if (body.detail) {
+            body.detail.forEach(error => {
+              console.log(error, body.detail)
+              this.addError(error.message)
+            })
+          }
+        } else {
+          this.noticeMe({msg: 'Une erreur est survenue', isSuccess: false})
+        }
+      }
     },
     handleFileChange(e) {
       this.avatarFile = e.target.files[0];
@@ -365,7 +405,16 @@ export default {
         }
       }
       return diff;
-    }
+    },
+    addError(error) {
+      this.errors.push(error)
+      setTimeout(() => {
+        this.removeError(error)
+      }, 3000)
+    },
+    removeError(error) {
+      this.errors.splice(this.errors.indexOf(error), 1)
+    },
   },
   computed: {
     ...mapGetters({

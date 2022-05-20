@@ -66,6 +66,7 @@ export default {
                     commit('user/CLEAR_USER')
                 }
             }
+            return response
 
         },
         async get_me() {

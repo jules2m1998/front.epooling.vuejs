@@ -31,6 +31,7 @@ export default {
                 const data = await resonse.json();
                 commit('SET_USER', data.user);
             }
+            return resonse.status;
         },
         async getCurrentUser({commit}) {
             const url = `${BASE_URI}user/account_token`;
@@ -62,18 +63,21 @@ export default {
                 const data = await resonse.json();
                 commit('SET_USER', data);
             }
+            return resonse
         },
         async updateSociety({dispatch}, person) {
             const resonse = await send_request_with_token('user/society', 'PUT', formDataRequest(person));
             if (resonse.status === 200) {
                 dispatch('getCurrentUser');
             }
+            return resonse
         },
         async updatePerson({dispatch}, person) {
             const resonse = await send_request_with_token('user/person', 'PUT', formDataRequest(person));
             if (resonse.status === 200) {
                 dispatch('getCurrentUser');
             }
+            return resonse
         },
     },
     getters: {

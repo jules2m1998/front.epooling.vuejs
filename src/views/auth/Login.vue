@@ -11,14 +11,6 @@
                 Connexion
               </h6>
             </div>
-            <div v-if="account.username" class="text-white px-6 py-4 border-0 rounded relative mb-4 bg-emerald-500 flex">
-              <span class="text-xl inline-block mr-3 align-middle">
-                <i class="fas fa-bell"></i>
-              </span>
-              <span>
-                Compte créé avec succès connectez-vous
-              </span>
-            </div>
             <hr class="mt-6 border-b-1 border-blueGray-300"/>
           </div>
           <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
@@ -122,15 +114,25 @@ export default {
   },
   methods: {
     ...mapActions({
-      getToken: 'account/getToken'
+      getToken: 'account/getToken',
+      noticeMe: 'notice/addNotice'
     }),
     async login() {
       this.isLoad = true;
       try {
-        await this.getToken(this.form);
+        const response = await this.getToken(this.form);
         await this.$router.push({name: 'dashboard'});
+        if (response.ok){
+          this.noticeMe({msg: 'Vous etes connecté', isSuccess: true});
+        } else {
+          if (response.status === 401) {
+            this.noticeMe({msg: 'Identifiants incorrects', isError: true});
+          } else {
+            this.noticeMe({msg: 'Une erreur est survenue', isError: true});
+          }
+        }
       } catch (e) {
-        console.log(e)
+        this.noticeMe({msg: e.message, isError: true});
       }  finally {
         this.isLoad = false;
       }
