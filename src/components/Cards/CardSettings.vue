@@ -275,7 +275,6 @@ export default {
     ...mapActions(
         {
           createCurrentUser: "user/createCurrentUser",
-          getCurrentUser: "user/getCurrentUser",
           updateUser: "user/updateUser",
           updateSociety: "user/updateSociety",
           updatePerson: "user/updatePerson",
@@ -285,7 +284,6 @@ export default {
     async create() {
       this.isLoad = true;
       try {
-
         if (!this.current_user) {
           try {
             let user
@@ -321,13 +319,6 @@ export default {
         console.log(e)
       } finally {
         this.isLoad = false;
-      }
-    },
-    async getUser() {
-      try {
-        await this.getCurrentUser()
-      } catch (e) {
-        console.log(e);
       }
     },
     async updateUserDetail() {
@@ -446,7 +437,6 @@ export default {
     },
   },
   async created() {
-    await this.getUser();
     if (this.current_user) {
       this.user_detail.email = this.current_user.email
       this.user_detail.phone = this.current_user.phone

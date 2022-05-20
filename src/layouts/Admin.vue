@@ -14,6 +14,7 @@
 import AdminNavbar from "@/components/Navbars/AdminNavbar.vue";
 import Sidebar from "@/components/Sidebar/Sidebar.vue";
 import FooterAdmin from "@/components/Footers/FooterAdmin.vue";
+import {mapActions} from "vuex";
 export default {
   name: "admin-layout",
   components: {
@@ -21,5 +22,15 @@ export default {
     Sidebar,
     FooterAdmin,
   },
+  computed: {
+    ...mapActions(
+        {
+          getCurrentUser: "user/getCurrentUser",
+        }
+    ),
+  },
+  async created() {
+    await this.getCurrentUser();
+  }
 };
 </script>

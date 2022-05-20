@@ -1,9 +1,10 @@
 import {createApp} from "vue";
-import { createStore } from 'vuex'
+import {createStore} from 'vuex'
 import {createWebHistory, createRouter} from "vue-router";
 import account from "@/store/account";
 import user from "@/store/user";
 import notice from "@/store/notice";
+import city from "@/store/city";
 
 // styles
 
@@ -23,7 +24,9 @@ import Auth from "@/layouts/Auth.vue";
 
 import Dashboard from "@/views/admin/Dashboard.vue";
 import Settings from "@/views/admin/Settings.vue";
-import Tables from "@/views/admin/Tables.vue";
+import AnnouncesIndex from "@/views/admin/Announces/Index.vue";
+import AnnouncesList from "@/views/admin/Announces/List.vue";
+import AnnouncesForm from "@/views/admin/Announces/Form.vue";
 import Maps from "@/views/admin/Maps.vue";
 
 // views for Auth layout
@@ -58,8 +61,29 @@ const routes = [
                 component: Settings,
             },
             {
-                path: "/admin/tables",
-                component: Tables,
+                path: "/admin/announce",
+                name: "announce",
+                redirect: {
+                    name: "announce.list"
+                },
+                component: AnnouncesIndex,
+                children: [
+                    {
+                        path: "/list",
+                        component: AnnouncesList,
+                        name: "announce.list"
+                    },
+                    {
+                        path: "/form",
+                        component: AnnouncesForm,
+                        name: "announce.form"
+                    },
+                    {
+                        path: "/edit/:id",
+                        component: AnnouncesForm,
+                        name: "announce.edit"
+                    }
+                ]
             },
             {
                 path: "/admin/maps",
@@ -109,6 +133,7 @@ const store = createStore({
         account,
         user,
         notice,
+        city
     }
 })
 
@@ -121,7 +146,7 @@ router.beforeEach(async (to, from, next) => {
             store.commit('account/REMOVE_TOKEN')
             next({
                 path: '/auth/login',
-                query: { redirect: to.fullPath }
+                query: {redirect: to.fullPath}
             })
         }
     } else {
