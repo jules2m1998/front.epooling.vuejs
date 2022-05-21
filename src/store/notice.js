@@ -4,8 +4,7 @@ import {msgType} from "../../const";
 export default {
     namespaced: true,
     state: {
-        notices: [
-        ]
+        notices: []
     },
     mutations: {
         ADD_NOTICE(state, notice) {

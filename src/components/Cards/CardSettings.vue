@@ -278,7 +278,8 @@ export default {
           updateUser: "user/updateUser",
           updateSociety: "user/updateSociety",
           updatePerson: "user/updatePerson",
-          noticeMe: 'notice/addNotice'
+          noticeMe: 'notice/addNotice',
+          getCurrentUser: "user/getCurrentUser",
         }
     ),
     async create() {
@@ -300,6 +301,7 @@ export default {
               isPerson = true
             }
             const response = await this.createCurrentUser({user, isPerson: isPerson})
+            await this.getCurrentUser()
             console.log(response)
           } catch (e) {
             console.log(e)
@@ -327,9 +329,11 @@ export default {
         ...this.objectDiff(this.user_detail, this.current_user, ['avatar_url']),
         user_id: this.current_user.id
       }
+      console.log(update_user)
       if (this.avatarFile) {
         update_user.avatar = this.avatarFile
       }
+      console.log(update_user)
       const response = await this.updateUser(update_user)
       await this.showUpdateMessage(response)
     },
@@ -437,6 +441,7 @@ export default {
     },
   },
   async created() {
+    await this.getCurrentUser()
     if (this.current_user) {
       this.user_detail.email = this.current_user.email
       this.user_detail.phone = this.current_user.phone

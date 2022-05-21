@@ -27,6 +27,7 @@ import Settings from "@/views/admin/Settings.vue";
 import AnnouncesIndex from "@/views/admin/Announces/Index.vue";
 import AnnouncesList from "@/views/admin/Announces/List.vue";
 import AnnouncesForm from "@/views/admin/Announces/Form.vue";
+import AnnouncesItem from "@/views/admin/Announces/Item.vue";
 import Maps from "@/views/admin/Maps.vue";
 
 // views for Auth layout
@@ -69,19 +70,24 @@ const routes = [
                 component: AnnouncesIndex,
                 children: [
                     {
-                        path: "/list",
+                        path: "/admin/dashboard/announce/list",
                         component: AnnouncesList,
                         name: "announce.list"
                     },
                     {
-                        path: "/form",
+                        path: "/admin/dashboard/announce/form",
                         component: AnnouncesForm,
                         name: "announce.form"
                     },
                     {
-                        path: "/edit/:id",
+                        path: "/admin/dashboard/announce/edit/:id",
                         component: AnnouncesForm,
                         name: "announce.edit"
+                    },
+                    {
+                        path: "/admin/dashboard/announce/:id",
+                        component: AnnouncesItem,
+                        name: "announce.item"
                     }
                 ]
             },

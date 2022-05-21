@@ -22,7 +22,7 @@ export default {
     Sidebar,
     FooterAdmin,
   },
-  computed: {
+  methods: {
     ...mapActions(
         {
           getCurrentUser: "user/getCurrentUser",

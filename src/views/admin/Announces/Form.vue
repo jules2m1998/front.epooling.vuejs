@@ -1,5 +1,4 @@
 <template>
-
   <form
       class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0"
       @submit.prevent="onSubmit"
@@ -124,7 +123,8 @@
 <script>
 import DefaultImage from "@/components/DefaultImage";
 import {mapActions, mapGetters} from "vuex";
-import {BASE_URI} from "@/store/config";
+import {BASE_URI, send_request_with_token} from "@/store/config";
+import {getData, getUrl, objectDiff} from "../../../../utils";
 
 export default {
   name: "Form",
@@ -134,6 +134,7 @@ export default {
   methods: {
     ...mapActions({
       getCity: 'city/getCountries',
+      addNotice: 'notice/addNotice',
     }),
     openFileManager() {
       this.$refs.file.click();
@@ -163,8 +164,8 @@ export default {
     },
     async onSubmit() {
       const city_name = `${this.cities.filter(c => c.id === this.itinerary[0].id)[0].name} - ${this.cities.filter(c => c.id === this.itinerary[this.itinerary.length - 1].id)[0].name}`;
-      const start_date = this.itinerary[0].date;
-      const end_date = this.itinerary[this.itinerary.length - 1].date;
+      const start_date = new Date(this.itinerary[0].date).toISOString().slice(0, 16);
+      const end_date = new Date(this.itinerary[this.itinerary.length - 1].date).toISOString().slice(0, 16);
       const form = {
         image: this.avatarFile,
         volume: this.volume,
@@ -173,25 +174,64 @@ export default {
           name: city_name,
           start_date: start_date,
           end_date: end_date,
-          cities: this.itinerary.map(it => ({id: it.id, price: it.price}))
+          cities: this.itinerary.map(it => ({id: it.id, price: it.price, date: it.date}))
         },
         user_id: this.user?.id
       }
-      const response = await fetch(
-          BASE_URI + 'announce/itinerary/',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(form)
-          }
-      )
-      if (response.ok) {
-        console.log('ok')
+      if (!this.id) {
+        const response = await fetch(
+            BASE_URI + 'announce/itinerary/',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(form)
+            }
+        )
+        console.log(response.ok);
+        if (response.ok) {
+          this.clearForm()
+          this.addNotice({msg: 'Votre annonce a bien été enregistrée', isSuccess: true});
+        } else {
+          this.addNotice({msg: 'Une erreur est survenue', isError: true});
+        }
+        console.log(form);
+      } else {
+        const diff = objectDiff(form,this.current_announce,['itinerary']);
+        if (JSON.stringify(form.itinerary) !== JSON.stringify(this.current_announce.itinerary)) {
+          diff.itinerary = form.itinerary
+        }
+        const response = await send_request_with_token('announce/itinerary/' + this.id, 'PUT', JSON.stringify(diff), {
+          'Content-Type': 'application/json'
+        });
+        console.log(response.status, diff);
       }
-      console.log(form);
-    }
+    },
+    clearForm() {
+      console.log('clear')
+      this.form = {
+        name: '',
+        description: '',
+        price: 0,
+        volume: 0,
+        image: '',
+        itinerary: {
+          name: '',
+          start_date: '',
+          end_date: '',
+          cities: []
+        }
+      }
+      this.avatarFile = null;
+      this.itinerary = [
+        {
+          id: 1,
+          date: new Date().toISOString().slice(0, 16),
+          price: 0
+        }
+      ]
+    },
   },
   data() {
     return {
@@ -207,7 +247,8 @@ export default {
       form: {
         volume: null,
         description: null,
-      }
+      },
+      current_announce: null,
     };
   },
   async created() {
@@ -216,11 +257,42 @@ export default {
     } catch (e) {
       console.log(e);
     }
+    if (this.$route.params.id) {
+      const data = await getData('announce/' + this.$route.params.id);
+      if (data) {
+        this.avatarFile = getUrl(data.image)
+        this.form = {
+          description: data.description,
+          volume: data.volume
+        }
+        this.itinerary = data.itinerary?.itinerary_city.map(c => ({
+          id: c.city.id,
+          date: new Date(c.date).toISOString().slice(0, 16),
+          price: c.price
+        }))
+
+        this.current_announce = {
+          image: this.avatarFile,
+          volume: this.volume,
+          ...this.form,
+          itinerary: {
+            name: data.itinerary?.name,
+            start_date: data.itinerary?.start_date,
+            end_date: data.itinerary?.end_date,
+            cities: this.itinerary.map(it => ({id: it.id, price: it.price, date: it.date}))
+          }
+        }
+      }
+    }
   },
   computed: {
     ...mapGetters({
       user: 'user/user',
+      notice: 'notice/notices'
     }),
+    id() {
+      return this.$route.params.id
+    }
   },
 }
 </script>

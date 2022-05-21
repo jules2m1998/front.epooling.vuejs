@@ -65,7 +65,7 @@
             Description
           </div>
           <p class="w-full px-4">
-            {{ current_user.society.desc }} lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            {{ current_user.society.desc }}
           </p>
         </div>
       </div>

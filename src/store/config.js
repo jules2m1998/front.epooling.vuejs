@@ -17,11 +17,14 @@ export const formDataRequest = item => {
     return formBody;
 }
 
-export const send_request_with_token = async (url, method, body) => {
-    return await fetch(BASE_URI + url, {
+export const send_request_with_token = async (url, method, body, headers= {}) => {
+    const _url = BASE_URI + url
+    console.log(_url)
+    return await fetch(_url, {
         method: method,
         headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
+            'Authorization': 'Bearer ' + localStorage.getItem('token'),
+            ...headers
         },
         body: body
     })
