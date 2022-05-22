@@ -22,7 +22,6 @@ import Auth from "@/layouts/Auth.vue";
 
 // views for Admin layout
 
-import Dashboard from "@/views/admin/Dashboard.vue";
 import Settings from "@/views/admin/Settings.vue";
 import AnnouncesIndex from "@/views/admin/Announces/Index.vue";
 import AnnouncesList from "@/views/admin/Announces/List.vue";
@@ -40,22 +39,23 @@ import Register from "@/views/auth/Register.vue";
 import Landing from "@/views/Landing.vue";
 import Profile from "@/views/Profile.vue";
 import Index from "@/views/Index.vue";
+import AllAnnounces from "@/views/admin/AllAnnounces";
 
 // routes
 
 const routes = [
     {
         path: "/admin",
-        redirect: "/admin/dashboard",
+        redirect: "/admin/all",
         component: Admin,
         meta: {
             requiresAuth: true
         },
         children: [
             {
-                path: "/admin/dashboard",
-                component: Dashboard,
-                name: "dashboard"
+                path: "/admin/all",
+                component: AllAnnounces,
+                name: "all"
             },
             {
                 path: "/admin/settings",

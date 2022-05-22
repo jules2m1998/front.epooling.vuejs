@@ -121,7 +121,7 @@ export default {
       this.isLoad = true;
       try {
         const response = await this.getToken(this.form);
-        await this.$router.push({name: 'dashboard'});
+        await this.$router.push({name: 'all'});
         if (response.ok){
           this.noticeMe({msg: 'Vous etes connecté', isSuccess: true});
         } else {

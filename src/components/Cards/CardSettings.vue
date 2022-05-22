@@ -301,6 +301,7 @@ export default {
               isPerson = true
             }
             const response = await this.createCurrentUser({user, isPerson: isPerson})
+            await this.showUpdateMessage(response)
             await this.getCurrentUser()
             console.log(response)
           } catch (e) {

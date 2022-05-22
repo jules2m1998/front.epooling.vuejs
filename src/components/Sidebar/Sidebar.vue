@@ -82,7 +82,7 @@
         <ul class="md:flex-col md:min-w-full flex flex-col list-none">
           <li class="items-center">
             <router-link
-              to="/admin/dashboard"
+              :to="{ name: 'all' }"
               v-slot="{ href, navigate, isActive }"
             >
               <a
@@ -99,7 +99,7 @@
                   class="fas fa-tv mr-2 text-sm"
                   :class="[isActive ? 'opacity-75' : 'text-blueGray-300']"
                 ></i>
-                Dashboard
+                Annonces
               </a>
             </router-link>
           </li>
@@ -147,7 +147,7 @@
                   class="fas fa-table mr-2 text-sm"
                   :class="[isActive ? 'opacity-75' : 'text-blueGray-300']"
                 ></i>
-                Annonces
+                Mes Annonces
               </a>
             </router-link>
           </li>

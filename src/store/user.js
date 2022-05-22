@@ -27,11 +27,11 @@ export default {
                     method: 'POST',
                     body: formDataRequest(user)
                 });
-            if (resonse.status === 201) {
+            if (resonse.ok) {
                 const data = await resonse.json();
                 commit('SET_USER', data.user);
             }
-            return resonse.status;
+            return resonse;
         },
         async getCurrentUser({commit}) {
             const url = `${BASE_URI}user/account_token`;
