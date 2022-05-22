@@ -92,8 +92,9 @@ const routes = [
                 ]
             },
             {
-                path: "/admin/maps",
+                path: "/admin/propositions",
                 component: Maps,
+                name: "propositions"
             },
         ],
     },

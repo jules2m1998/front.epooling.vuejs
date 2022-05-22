@@ -2,7 +2,7 @@
   <div>
     <div>
       <div
-          class="m-1 p-4 absolute z-50 top-0 right-0 rounded border-2 border-gray-200 shadow"
+          class="m-1 p-4 fixed z-50 top-0 right-0 rounded border-2 border-gray-200 shadow"
           role="alert"
           v-for="(v, k) in notices" :key="k"
           :class="{ 'bg-orange-200 text-orange-700': v.type === msgType.error, 'bg-green-200 text-green-700': v.type === msgType.success, 'bg-blue-200 text-blue-700': v.type === msgType.info }"

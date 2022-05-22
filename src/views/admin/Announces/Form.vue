@@ -189,14 +189,12 @@ export default {
               body: JSON.stringify(form)
             }
         )
-        console.log(response.ok);
         if (response.ok) {
           this.clearForm()
           this.addNotice({msg: 'Votre annonce a bien été enregistrée', isSuccess: true});
         } else {
           this.addNotice({msg: 'Une erreur est survenue', isError: true});
         }
-        console.log(form);
       } else {
         const diff = objectDiff(form,this.current_announce,['itinerary']);
         if (JSON.stringify(form.itinerary) !== JSON.stringify(this.current_announce.itinerary)) {
@@ -206,6 +204,17 @@ export default {
           'Content-Type': 'application/json'
         });
         console.log(response.status, diff);
+        if (response.ok){
+          this.addNotice({msg: 'Votre annonce a bien été modifiée', isSuccess: true});
+          await this.$router.push({
+            name: 'announce.item',
+            params: {
+              id: this.id
+            }
+          })
+        } else {
+          this.addNotice({msg: 'Une erreur est survenue', isError: true});
+        }
       }
     },
     clearForm() {
