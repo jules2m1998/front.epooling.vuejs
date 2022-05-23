@@ -7,37 +7,23 @@
       <div class="container mx-auto items-center flex flex-wrap">
         <div class="w-full md:w-8/12 lg:w-6/12 xl:w-6/12 px-4">
           <div class="pt-32 sm:pt-0">
-            <h2 class="font-semibold text-4xl text-blueGray-600">
-              Vue Notus - A beautiful extension for Tailwind CSS.
-            </h2>
+            <img src="/logo-group.svg" alt="logo" style="width: 300px;">
             <p class="mt-4 text-lg leading-relaxed text-blueGray-500">
-              Vue Notus is Free and Open Source. It does not change any of the
-              CSS from
-              <a
-                href="https://tailwindcss.com/?ref=creativetim"
-                class="text-blueGray-600"
-                target="_blank"
-              >
-                Tailwind CSS.
-              </a>
-              It features multiple HTML elements and it comes with dynamic
-              components for ReactJS, Vue and Angular.
+              Ne reparter plus jamais a vide grace nous. Nous sommes une plateforme de mise en relation entre entreprises et/ou particuliers necesstant le transport de materiels d'un destination a une autre.
             </p>
             <div class="mt-12">
-              <a
-                href="https://www.creative-tim.com/learning-lab/tailwind/vue/overview/notus?ref=vn-index"
-                target="_blank"
+              <router-link
+                :to="{name: 'register'}"
                 class="get-started text-white font-bold px-6 py-4 rounded outline-none focus:outline-none mr-1 mb-1 bg-emerald-500 active:bg-emerald-600 uppercase text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
               >
-                Get started
-              </a>
-              <a
-                href="https://github.com/creativetimofficial/vue-notus?ref=vn-index"
+                Commencer
+              </router-link>
+              <router-link
+                :to="{name: 'login'}"
                 class="github-star ml-1 text-white font-bold px-6 py-4 rounded outline-none focus:outline-none mr-1 mb-1 bg-blueGray-700 active:bg-blueGray-600 uppercase text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
-                target="_blank"
               >
-                Github Star
-              </a>
+                Connexion
+              </router-link>
             </div>
           </div>
         </div>

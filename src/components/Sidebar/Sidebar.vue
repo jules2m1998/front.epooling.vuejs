@@ -128,7 +128,7 @@
             </router-link>
           </li>
 
-          <li class="items-center">
+          <li class="items-center" v-if="!current_user?.person">
             <router-link
               :to="{ name: 'announce' }"
               v-slot="{ href, navigate, isActive }"
@@ -175,6 +175,18 @@
               </a>
             </router-link>
           </li>
+
+          <li class="items-center">
+            <button
+              class="text-xs uppercase py-3 font-bold block text-red-500"
+              @click="logoutMe"
+            >
+              <i
+                class="fas fa-power-off mr-2 text-sm"
+              ></i>
+              Deconnexion
+            </button>
+          </li>
         </ul>
       </div>
     </div>
@@ -185,6 +197,7 @@
 <script>
 import NotificationDropdown from "@/components/Dropdowns/NotificationDropdown.vue";
 import UserDropdown from "@/components/Dropdowns/UserDropdown.vue";
+import {mapActions, mapGetters} from "vuex";
 
 export default {
   data() {
@@ -193,13 +206,25 @@ export default {
     };
   },
   methods: {
+    ...mapActions({
+      logout: 'account/logout'
+    }),
     toggleCollapseShow: function (classes) {
       this.collapseShow = classes;
     },
+    logoutMe() {
+      this.logout();
+      this.$router.push({ name: 'home' });
+    }
   },
   components: {
     NotificationDropdown,
     UserDropdown,
   },
+  computed: {
+    ...mapGetters({
+      current_user: 'user/user'
+    })
+  }
 };
 </script>

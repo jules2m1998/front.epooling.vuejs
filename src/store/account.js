@@ -59,6 +59,7 @@ export default {
             if (data.access_token) {
                 commit('SET_TOKEN', data.access_token)
                 const user = await dispatch('get_me')
+                console.log(data.access_token)
                 if (user) {
                     commit('SET_ACCOUNT', user)
                 } else {
@@ -78,6 +79,10 @@ export default {
                 return null
             }
         },
+        logout({commit}) {
+            commit('CLEAR_LOCAL_STORAGE')
+            commit('user/CLEAR_USER', null, { root: true })
+        }
     },
     getters: {
         account: (state) => JSON.parse(localStorage.getItem('account')) || state.account,

@@ -27,7 +27,6 @@ import AnnouncesIndex from "@/views/admin/Announces/Index.vue";
 import AnnouncesList from "@/views/admin/Announces/List.vue";
 import AnnouncesForm from "@/views/admin/Announces/Form.vue";
 import AnnouncesItem from "@/views/admin/Announces/Item.vue";
-import Maps from "@/views/admin/Maps.vue";
 
 // views for Auth layout
 
@@ -40,6 +39,7 @@ import Landing from "@/views/Landing.vue";
 import Profile from "@/views/Profile.vue";
 import Index from "@/views/Index.vue";
 import AllAnnounces from "@/views/admin/AllAnnounces";
+import PropositionList from "@/views/admin/propositions/PropositionList";
 
 // routes
 
@@ -93,7 +93,7 @@ const routes = [
             },
             {
                 path: "/admin/propositions",
-                component: Maps,
+                component: PropositionList,
                 name: "propositions"
             },
         ],
@@ -126,6 +126,7 @@ const routes = [
     {
         path: "/",
         component: Index,
+        name: 'home',
     },
     {path: "/:pathMatch(.*)*", redirect: "/"},
 ];

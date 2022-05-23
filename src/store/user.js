@@ -79,6 +79,9 @@ export default {
             }
             return resonse
         },
+        clearUser({commit}) {
+            commit('CLEAR_USER');
+        }
     },
     getters: {
         user: state => state.user

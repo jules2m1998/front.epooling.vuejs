@@ -292,6 +292,7 @@ export default {
           msg: 'Votre proposition a bien été soumise',
           isSuccess: true
         })
+        await this.getCurrentAnnounce()
       } else {
         this.notice_me({
           msg: 'Une erreur est survenue',

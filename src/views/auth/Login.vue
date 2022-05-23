@@ -44,18 +44,6 @@
                     v-model="form.password"
                 />
               </div>
-              <div>
-                <label class="inline-flex items-center cursor-pointer">
-                  <input
-                      id="customCheckLogin"
-                      type="checkbox"
-                      class="form-checkbox border-0 rounded text-blueGray-700 ml-1 w-5 h-5 ease-linear transition-all duration-150"
-                  />
-                  <span class="ml-2 text-sm font-semibold text-blueGray-600">
-                    Remember me
-                  </span>
-                </label>
-              </div>
 
               <div class="text-center mt-6">
                 <button
@@ -74,7 +62,7 @@
           </div>
         </div>
         <div class="flex flex-wrap mt-6 relative">
-          <div class="w-1 text-right">
+          <div class="">
             <router-link to="/auth/register" class="text-blueGray-200">
               <small>Creer un compte</small>
             </router-link>
@@ -115,9 +103,11 @@ export default {
   methods: {
     ...mapActions({
       getToken: 'account/getToken',
-      noticeMe: 'notice/addNotice'
+      noticeMe: 'notice/addNotice',
+      logout: 'account/logout'
     }),
     async login() {
+      this.logout()
       this.isLoad = true;
       try {
         const response = await this.getToken(this.form);
