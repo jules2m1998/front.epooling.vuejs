@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="w-full md:w-2/3 shadow p-5 rounded-lg bg-white">
+    <div class="w-full md:w-2/3 shadow p-5 rounded-lg bg-white" v-if="announces.length">
 
       <div class="flex items-center justify-between mt-4">
         <p class="font-medium">
@@ -38,7 +38,7 @@
         </div>
       </div>
     </div>
-    <announce-list class="mt-3" :announces="announces" />
+    <announce-list :is-loading="loader" class="mt-3" :announces="announces" />
   </div>
 </template>
 
@@ -60,7 +60,8 @@ export default {
       form: {
         start: -1,
         end: -1
-      }
+      },
+      loader: true
     };
   },
   methods:{
@@ -81,18 +82,22 @@ export default {
       }
     },
     async addFilters() {
+      this.loader = true
       try {
         if (this.form.end !== -1 && this.form.start !== -1) {
           this.announces = await getData(`announce?start=${this.form.start}&end=${this.form.end}`)
         }
       } catch (e) {
         console.log(e)
+      } finally {
+        this.loader = false
       }
     }
   },
   async created() {
     this.cities = await this.getCities();
     await this.getAllAnnounces()
+    this.loader = false
   }
 }
 </script>

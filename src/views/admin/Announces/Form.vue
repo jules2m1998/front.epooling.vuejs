@@ -258,6 +258,7 @@ export default {
         description: null,
       },
       current_announce: null,
+      data: []
     };
   },
   async created() {
@@ -268,6 +269,7 @@ export default {
     }
     if (this.$route.params.id) {
       const data = await getData('announce/' + this.$route.params.id);
+      this.data = data
       if (data) {
         this.avatarFile = getUrl(data.image)
         this.form = {
@@ -276,7 +278,7 @@ export default {
         }
         this.itinerary = data.itinerary?.itinerary_city.map(c => ({
           id: c.city.id,
-          date: new Date(c.date).toISOString().slice(0, 16),
+          date: c.date?.slice(0, 16),
           price: c.price
         }))
 
@@ -286,11 +288,12 @@ export default {
           ...this.form,
           itinerary: {
             name: data.itinerary?.name,
-            start_date: data.itinerary?.start_date,
-            end_date: data.itinerary?.end_date,
-            cities: this.itinerary.map(it => ({id: it.id, price: it.price, date: it.date}))
+            start_date: data.itinerary?.start_date?.slice(0, 16),
+            end_date: data.itinerary?.end_date?.slice(0, 16),
+            cities: this.itinerary.map(it => ({id: it.id, price: it.price, date: new Date(it.date).toISOString().slice(0, 16)}))
           }
         }
+        console.log(this.current_announce);
       }
     }
   },

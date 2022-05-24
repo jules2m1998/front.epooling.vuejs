@@ -11,7 +11,7 @@
     >
       Vos annonces
     </h3>
-    <announce-list @delete="delete_item" :announces="announces" />
+    <announce-list :is-loading="loader" @delete="delete_item" :announces="announces" />
   </div>
 </template>
 
@@ -27,6 +27,7 @@ export default {
   data() {
     return {
       announces: [],
+      loader: true,
     }
   },
   methods: {
@@ -69,6 +70,7 @@ export default {
     await this.getCurrentUser();
     console.log(this.current_user)
     await this.fetchUserAnnounces();
+    this.loader = false
   }
 }
 </script>
