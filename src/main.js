@@ -63,6 +63,7 @@ const routes = [
             {
                 path: "/admin/settings",
                 component: Settings,
+                name: "settings",
             },
             {
                 path: "/admin/announce",
@@ -123,14 +124,6 @@ const routes = [
                 name: 'register',
             },
         ],
-    },
-    {
-        path: "/landing",
-        component: Landing,
-    },
-    {
-        path: "/profile",
-        component: Profile,
     },
     {
         path: "/",

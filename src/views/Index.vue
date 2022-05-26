@@ -183,6 +183,6 @@ export default {
   components: {
     IndexNavbar,
     FooterComponent,
-  },
+  }
 };
 </script>
