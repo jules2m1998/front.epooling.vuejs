@@ -38,21 +38,21 @@
         </div>
       </div>
     </div>
-    <announce-list :is-loading="loader" class="mt-3" :announces="announces" />
+    <announce-list :is-loading="loader" class="mt-3" :announces="announces" @delete="delete_item" />
   </div>
 </template>
 
 <script>
-import {mapActions} from "vuex";
+import {mapActions, mapGetters} from "vuex";
 import {getData} from "../../../utils";
 import AnnounceList from "@/components/Announces/AnnounceList";
+import {send_request_with_token} from "@/store/config";
 
 export default {
   name: "AllAnnounces",
   components: {
     AnnounceList
   },
-
   data() {
     return {
       announces: [],
@@ -92,12 +92,32 @@ export default {
       } finally {
         this.loader = false
       }
+    },
+    /**
+     *
+     * @param {Number} id
+     * @returns {Promise<void>}
+     */
+    async delete_item(id) {
+      console.log(id)
+      const res = await send_request_with_token(
+          `announce/${id}/${this.current_user.id}`,
+          "DELETE"
+      )
+      if (res.ok) {
+        await this.getAllAnnounces()
+      }
     }
   },
   async created() {
     this.cities = await this.getCities();
     await this.getAllAnnounces()
     this.loader = false
+  },
+  computed: {
+    ...mapGetters({
+      current_user: 'user/user'
+    })
   }
 }
 </script>

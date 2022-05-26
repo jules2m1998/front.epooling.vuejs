@@ -43,6 +43,8 @@
             </div>
           </div>
           <p class="leading-relaxed">{{ announce.description }}</p>
+          <h1 class="text-gray-900 text-2xl title-font font-medium my-4" v-if="announce?.volume">Poids maximum du colis : <span class="font-bold">{{ announce.volume?.toLocaleString() }} KG</span></h1>
+          <h1 class="text-gray-900 text-2xl title-font font-medium my-4" v-else>Aucun poids maximum spécifié</h1>
           <div class="flex mt-6 items-center pb-5 border-b-2 border-gray-200 mb-5">
             <ol class="relative border-l border-gray-200 dark:border-gray-700">
               <li class="mb-10 ml-6" v-for="(it,k) in announce.itinerary?.itinerary_city" :key="k">
@@ -403,10 +405,10 @@ export default {
     /**
      *
      * @param order {{"id": 0,"is_accepted": false,"is_denied": false,"is_delivered_agent": false,"is_delivered_client": false}}
-     * @returns {Promise<void>}
+     * @returns {boolean}
      */
-    async is_my_publish(order) {
-      return order.user.id === this.current_user.id
+    is_my_publish(order) {
+      return order?.user?.id === this.current_user.id
     },
     async getCurrentAnnounce() {
       const data = await getData(`announce/${this.$route.params.id}`);

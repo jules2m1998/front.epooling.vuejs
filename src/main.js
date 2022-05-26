@@ -55,7 +55,10 @@ const routes = [
             {
                 path: "/admin/all",
                 component: AllAnnounces,
-                name: "all"
+                name: "all",
+                meta: {
+                    requiredUser: true
+                }
             },
             {
                 path: "/admin/settings",
@@ -64,6 +67,9 @@ const routes = [
             {
                 path: "/admin/announce",
                 name: "announce",
+                meta: {
+                    requiredUser: true
+                },
                 redirect: {
                     name: "announce.list"
                 },
@@ -94,7 +100,10 @@ const routes = [
             {
                 path: "/admin/propositions",
                 component: PropositionList,
-                name: "propositions"
+                name: "propositions",
+                meta: {
+                    requiredUser: true
+                },
             },
         ],
     },
@@ -149,7 +158,20 @@ router.beforeEach(async (to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
         const user = await store.dispatch('account/get_me');
         if (user) {
-            next();
+            if (to.matched.some(record => record.meta.requiredUser)) {
+                await store.dispatch('user/getCurrentUser');
+                const user = store.getters['user/user'];
+                if (user) {
+                    next();
+                } else {
+                    next({
+                        path: '/admin/settings',
+                        query: {redirect: to.fullPath}
+                    })
+                }
+            } else {
+                next();
+            }
         } else {
             store.commit('account/REMOVE_TOKEN')
             next({

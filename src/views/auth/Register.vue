@@ -56,7 +56,7 @@
                     type="password"
                     class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     placeholder="Confirmer le mot de passe"
-                    v-model="form.password"
+                    v-model="confirmPwd"
                 />
               </div>
 
@@ -95,7 +95,7 @@
 </template>
 <script>
 import Loader from "@/components/Loader";
-import { mapActions } from 'vuex'
+import {mapActions} from 'vuex'
 
 export default {
   components: {
@@ -107,24 +107,55 @@ export default {
       form: {
         username: '',
         password: ''
-      }
+      },
+      confirmPwd: ''
     };
   },
   methods: {
     ...mapActions({
-      login: 'account/register'
+      login: 'account/register',
+      noticeMe: 'notice/addNotice'
     }),
     async register() {
       this.isLoad = true;
       try {
-        await this.login(this.form)
+        if (this.form.password === this.confirmPwd) {
+          await this.sendForm();
+        } else {
+          this.noticeMe({
+            isError: true,
+            msg: 'Les mots de passe ne correspondent pas'
+          });
+        }
+      } catch (e) {
+        console.log(e)
+        this.noticeMe({
+          isSuccess: true,
+          msg: 'Une erreur est survenue verifier vos informations !'
+        })
+      } finally {
+        this.isLoad = false
+      }
+    },
+    async sendForm() {
+      const {response, data} = await this.login(this.form)
+      console.log(response)
+      if (response.ok) {
+        this.noticeMe({
+          isSuccess: true,
+          msg: 'Votre compte a été créé avec succès'
+        })
         await this.$router.push({
           name: 'login'
         })
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.isLoad = false
+      } else {
+        console.log('szdfsdfhjsdfd')
+        const msg = data.detail.map(it => ({
+          msg: it.message,
+          isError: true
+        }))
+        msg.forEach(it => this.noticeMe(it))
+        console.log(msg, 'dsfcjhdfghsda')
       }
     }
   },

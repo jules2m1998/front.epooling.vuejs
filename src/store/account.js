@@ -41,7 +41,9 @@ export default {
             )
             const data = await response.json()
             commit('SET_ACCOUNT', data)
-            commit('user/CLEAR_USER')
+            commit('user/CLEAR_USER', null, { root: true })
+
+            return {response, data}
         },
         async getToken({commit, dispatch}, user) {
             commit('CLEAR_LOCAL_STORAGE')
@@ -67,7 +69,7 @@ export default {
                     commit('user/CLEAR_USER')
                 }
             }
-            return response
+            return {response, data}
 
         },
         async get_me() {

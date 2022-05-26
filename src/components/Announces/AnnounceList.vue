@@ -53,7 +53,7 @@
               </router-link>
               <button class="h-10 px-6 font-semibold rounded-md bg-red-500 border border-slate-200 text-white"
                       type="button" @click="delete_item(announce.id)">
-                Supprimer
+                Supprimer{{ announce.id }}
               </button>
             </div>
           </div>

@@ -186,7 +186,7 @@
                 <input
                     type="text"
                     class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    placeholder="Douala, makepe missoke"
+                    placeholder="Epooling..."
                     v-model="society.name"
                 />
               </div>
@@ -318,6 +318,8 @@ export default {
             await this.updateCurrentPerson()
           }
         }
+
+        this.initialisations()
       } catch (e) {
         console.log(e)
       } finally {
@@ -359,7 +361,7 @@ export default {
     },
     async showUpdateMessage(response) {
       this.errors = []
-      if (response.ok){
+      if (response.ok) {
         this.noticeMe({msg: 'Modification effectuée avec succès', isSuccess: true})
       } else {
         // const h =  {"detail":[{"loc":["body","phone"],"msg":"value is not a valid integer","type":"type_error.integer"}]}
@@ -411,6 +413,20 @@ export default {
     removeError(error) {
       this.errors.splice(this.errors.indexOf(error), 1)
     },
+    initialisations() {
+      this.user_detail.email = this.current_user.email
+      this.user_detail.phone = this.current_user.phone
+      this.user_detail.phone_ex = this.current_user.phone_ex
+      this.user_detail.avatar_url = this.current_user.avatar_url
+
+      this.person.first_name = this.current_user.person?.first_name
+      this.person.last_name = this.current_user.person?.last_name
+      this.person.sex = this.current_user.person?.sex
+
+      this.society.desc = this.current_user.society?.desc
+      this.society.location = this.current_user.society?.location
+      this.society.name = this.current_user.society?.name
+    }
   },
   computed: {
     ...mapGetters({
@@ -444,18 +460,7 @@ export default {
   async created() {
     await this.getCurrentUser()
     if (this.current_user) {
-      this.user_detail.email = this.current_user.email
-      this.user_detail.phone = this.current_user.phone
-      this.user_detail.phone_ex = this.current_user.phone_ex
-      this.user_detail.avatar_url = this.current_user.avatar_url
-
-      this.person.first_name = this.current_user.person?.first_name
-      this.person.last_name = this.current_user.person?.last_name
-      this.person.sex = this.current_user.person?.sex
-
-      this.society.desc = this.current_user.society?.desc
-      this.society.location = this.current_user.society?.location
-      this.society.name = this.current_user.society?.name
+      this.initialisations()
     }
   }
 }

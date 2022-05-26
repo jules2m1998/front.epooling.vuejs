@@ -110,20 +110,27 @@ export default {
       this.logout()
       this.isLoad = true;
       try {
-        const response = await this.getToken(this.form);
+        const {response, data} = await this.getToken(this.form);
         await this.$router.push({name: 'all'});
-        if (response.ok){
+        if (response.ok) {
           this.noticeMe({msg: 'Vous etes connecté', isSuccess: true});
         } else {
+          console.log(response.status)
           if (response.status === 401) {
             this.noticeMe({msg: 'Identifiants incorrects', isError: true});
+          } else if (response.status === 404)  {
+            this.noticeMe({msg: 'Nom d\'utilisateur ou mot de passe incorrect !', isError: true});
           } else {
-            this.noticeMe({msg: 'Une erreur est survenue', isError: true});
+            const msg = data.detail.map(it => ({
+              msg: it.message,
+              isError: true
+            }))
+            msg.forEach(it => this.noticeMe(it))
           }
         }
       } catch (e) {
         this.noticeMe({msg: e.message, isError: true});
-      }  finally {
+      } finally {
         this.isLoad = false;
       }
     }

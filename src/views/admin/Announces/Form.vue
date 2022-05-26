@@ -37,7 +37,7 @@
             class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
             htmlFor="grid-password"
         >
-          Volume approximatif (en m3)
+          Poids maximal du colis  (en kg)
         </label>
         <input
             type="number"
@@ -83,7 +83,7 @@
             type="datetime-local"
             id="meeting-time"
             name="meeting-time"
-            min="2020-06-07T00:00"
+            :min="getMinDate(it)"
             class="mr-2"
             v-model="it.date"
         >
@@ -99,6 +99,7 @@
           <button type="button"
                   class="py-2 text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-green-500 dark:text-green-500 dark:hover:text-white dark:hover:bg-green-600 dark:focus:ring-green-800"
                   @click="addItinerary"
+                  v-if="k === itinerary.length - 1"
           >
             Ajouter
           </button>
@@ -106,7 +107,7 @@
               type="button"
               class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
               @click="removeItinerary(k)"
-              v-if="k > 0"
+              v-if="k > 1"
           >
             Supprimer
           </button>
@@ -158,7 +159,7 @@ export default {
       });
     },
     removeItinerary(index) {
-      if (this.itinerary.length >= 2) {
+      if (this.itinerary.length > 2) {
         this.itinerary.splice(index, 1);
       }
     },
@@ -189,11 +190,22 @@ export default {
               body: JSON.stringify(form)
             }
         )
+        console.log(response);
         if (response.ok) {
           this.clearForm()
           this.addNotice({msg: 'Votre annonce a bien été enregistrée', isSuccess: true});
         } else {
-          this.addNotice({msg: 'Une erreur est survenue', isError: true});
+          if (response.status === 422) {
+            const errors = await response.json();
+            console.log(errors.detail);
+            const msg = errors.detail.map(it => ({
+              msg: it.message,
+              isError: true
+            }))
+            msg.forEach(it => this.addNotice(it))
+          } else {
+            this.addNotice({msg: 'Une erreur est survenue', isSuccess: false});
+          }
         }
       } else {
         const diff = objectDiff(form,this.current_announce,['itinerary']);
@@ -241,6 +253,19 @@ export default {
         }
       ]
     },
+    /**
+     *
+     * @param itinerary {{id, date, price}}
+     * @returns {string}
+     */
+    getMinDate(itinerary) {
+      const index = this.itinerary.indexOf(itinerary)
+      if (index === 0) {
+        return new Date().toISOString().slice(0, 16)
+      } else {
+        return new Date(this.itinerary[index - 1].date).toISOString().slice(0, 16)
+      }
+    },
   },
   data() {
     return {
@@ -251,7 +276,12 @@ export default {
           id: 1,
           date: new Date().toISOString().slice(0, 16),
           price: 0
-        }
+        },
+        {
+          id: 1,
+          date: new Date().toISOString().slice(0, 16),
+          price: 0
+        },
       ],
       form: {
         volume: null,
