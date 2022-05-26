@@ -35,8 +35,6 @@ import Register from "@/views/auth/Register.vue";
 
 // views without layouts
 
-import Landing from "@/views/Landing.vue";
-import Profile from "@/views/Profile.vue";
 import Index from "@/views/Index.vue";
 import AllAnnounces from "@/views/admin/AllAnnounces";
 import PropositionList from "@/views/admin/propositions/PropositionList";
